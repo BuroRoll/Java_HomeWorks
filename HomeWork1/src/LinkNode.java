@@ -1,20 +1,22 @@
-public class LinkNode<T>{
+public class LinkNode<T> implements IElement<T>{
     private T data;
-    private LinkNode<T> nextElement;
+    private IElement<T> nextElement;
 
     public LinkNode(T data) {
         this.data = data;
     }
 
-    public void setNextElement(LinkNode<T> nextElement){
+    public void setNextElement(LinkNode<T> nextElement) {
         this.nextElement = nextElement;
     }
 
+    @Override
     public T getData() {
         return data;
     }
 
-    public LinkNode<T> getNext() {
+    @Override
+    public IElement<T> getNext() {
         return nextElement;
     }
 }

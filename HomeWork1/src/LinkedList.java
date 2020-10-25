@@ -1,50 +1,57 @@
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 
-public class LinkedList<T> {
+public class LinkedList<T> implements IStupidList<T>{
     private LinkNode<T> first;
     private LinkNode<T> last;
     private int size = 0;
 
-    public LinkedList() {
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void add(T element) {
-        if (last == null) {
-            this.last = new LinkNode<>(element);
+    @Override
+    public void appendIntoTail(IElement element) {
+        if(last == null){
+            this.last = (LinkNode<T>) element;
             this.first = last;
-        } else {
-            this.last.setNextElement(new LinkNode<>(element));
-            this.last = last.getNext();
+        }else {
+            last.setNextElement((LinkNode) element);
+            last = (LinkNode<T>) last.getNext();
         }
         size++;
     }
 
+    @Override
     public boolean isCyclic() {
-        return first == last;
+        HashSet<LinkNode<T>> set = new HashSet<>();
+        LinkNode<T> node = first;
+        while(node != null){
+            if(set.contains(node))
+                return true;
+            set.add(node);
+            node = (LinkNode<T>) node.getNext();
+        }
+        return false;
     }
 
-    public void sort(Comparator<? super T> c) {
-        Object[] arr = this.toArray();
-        Arrays.sort(arr, (Comparator) c);
-        first = new LinkNode<>((T) arr[0]);
-        last = first;
-        for(int i = 1; i < size; i++){
-            last.setNextElement(new LinkNode<>((T) arr[i]));
-            last = last.getNext();
+    @Override
+    public IStupidList sort(Comparator c){
+        if(this.isCyclic()){
+            System.out.println("Невозможно выполнить сортировку из-за цикличности списка");
+            return null;
         }
+        Object[] arr = this.toArray();
+        Arrays.sort(arr, c);
+        LinkedList<T> sorterList = new LinkedList<>();
+        for(int i = 0; i < size; i++)
+            sorterList.appendIntoTail(new LinkNode(arr[i]));
+        return sorterList;
     }
 
     private Object[] toArray() {
         Object[] arr = new Object[(int) size];
-        LinkNode curr = first;
+        LinkNode<T> curr = first;
         for (int i = 0; i < size; i++) {
             arr[i] = curr.getData();
-            curr = curr.getNext();
+            curr = (LinkNode<T>) curr.getNext();
         }
         return arr;
     }
